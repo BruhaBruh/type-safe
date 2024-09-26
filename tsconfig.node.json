@@ -1,0 +1,45 @@
+{
+  "extends": "@bruhabruh/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "composite": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* Bundler mode */
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "src",
+    ".eslintrc.cjs",
+    ".prettierrc.cjs",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "commitlint.config.cjs"
+  ],
+  "exclude": ["node_modules", "dist"]
+}
