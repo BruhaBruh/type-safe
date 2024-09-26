@@ -1,5 +1,6 @@
 import { Primitive, UnknownArray, UnknownRecord } from 'type-fest';
 import { z } from 'zod';
+import { ErrorMessage } from './error-message';
 
 const isObject = (pathFragment: string | number): pathFragment is string => {
   return typeof pathFragment === 'string';
@@ -37,8 +38,6 @@ export const zodStructuredError = <T>(
   });
   return errors as ZodStructuredError<T>;
 };
-
-type ErrorMessage = string | undefined;
 
 export type ZodStructuredError<T> = T extends Primitive
   ? ErrorMessage

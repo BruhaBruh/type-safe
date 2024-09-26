@@ -31,7 +31,7 @@ export default defineConfig({
         preserveModulesRoot: 'src',
       },
       input: sync('src/**/*.ts', {
-        ignore: ['src/**/*.d.ts'],
+        ignore: ['src/**/*.d.ts', 'src/**/*.test.ts'],
       }).reduce((entries, file) => {
         const entry = path.relative('src', file).replace(/\.[^/.]+$/, '');
         const newEntries = entries;
