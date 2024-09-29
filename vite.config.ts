@@ -34,7 +34,7 @@ export default defineConfig({
         ignore: ['src/**/*.d.ts', 'src/**/*.test.ts'],
       }).reduce((entries, file) => {
         const entry = path.relative('src', file).replace(/\.[^/.]+$/, '');
-        const newEntries = entries;
+        const newEntries: Record<string, string> = entries;
         newEntries[entry] = path.resolve(__dirname, file);
         return entries;
       }, {}),

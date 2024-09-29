@@ -54,7 +54,7 @@ interface BaseResult<T, E> {
 
 export type Result<T, E> = BaseResult<T, E>;
 
-class OkImpl<T extends unknown> implements BaseResult<T, never> {
+class OkImpl<T> implements BaseResult<T, never> {
   readonly #value: T;
 
   constructor(value: T) {
@@ -177,7 +177,7 @@ export const Ok = (<T>(val: T) => new OkImpl<T>(val)) as typeof OkImpl &
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type Ok<T> = OkImpl<T>;
 
-class ErrImpl<E extends unknown> implements BaseResult<never, E> {
+class ErrImpl<E> implements BaseResult<never, E> {
   readonly #error: E;
 
   constructor(error: E) {
