@@ -1,17 +1,17 @@
-import mainConfig from '@bruhabruh/eslint-config';
-import importOrderConfig from '@bruhabruh/eslint-config/import-order.js';
-import prettierConfig from '@bruhabruh/eslint-config/prettier.js';
-import serverConfig from '@bruhabruh/eslint-config/server.js';
+import eslint from '@bruhabruh/eslint-config';
 
-export default [
+export default eslint.build(
   {
-    ignores: ['dist', 'node_modules', 'coverage'],
+    name: '@bruhabruh/type-safe/global-ignore',
+    ignores: ['node_modules', 'dist', 'coverage', '.vscode'],
   },
-  ...mainConfig,
-  ...serverConfig,
-  ...importOrderConfig,
-  ...prettierConfig,
+  ...eslint.configs.base.recommended,
+  eslint.configs.importOrder.recommended,
+  eslint.configs.json.recommended,
+  eslint.configs.markdown.recommended,
+  eslint.configs.prettier.recommended,
   {
+    name: '@bruhabruh/type-safe',
     rules: {
       'new-cap': [
         'error',
@@ -19,4 +19,4 @@ export default [
       ],
     },
   },
-];
+);

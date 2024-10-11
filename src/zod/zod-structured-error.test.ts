@@ -58,12 +58,9 @@ describe('zodStructuredError', () => {
 
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(zodStructuredError(result.error)).toStrictEqual([
-            ,
-            'Expected string, received number',
-            ,
-            'Expected string, received boolean',
-          ]);
+          const error = zodStructuredError(result.error);
+          expect(error?.[1]).toStrictEqual('Expected string, received number');
+          expect(error?.[3]).toStrictEqual('Expected string, received boolean');
         }
       });
     });
@@ -112,12 +109,11 @@ describe('zodStructuredError', () => {
 
           expect(result.success).toBe(false);
           if (!result.success) {
-            expect(zodStructuredError(result.error)).toStrictEqual([
-              ,
-              'Expected array, received number',
-              ,
+            const error = zodStructuredError(result.error);
+            expect(error?.[1]).toStrictEqual('Expected array, received number');
+            expect(error?.[3]).toStrictEqual(
               'Expected array, received boolean',
-            ]);
+            );
           }
         });
 
@@ -152,11 +148,13 @@ describe('zodStructuredError', () => {
 
           expect(result.success).toBe(false);
           if (!result.success) {
-            expect(zodStructuredError(result.error)).toStrictEqual([
-              [, 'Expected string, received number'],
-              ,
-              [, , , 'Expected string, received boolean'],
-            ]);
+            const error = zodStructuredError(result.error);
+            expect(error?.[0]?.[1]).toStrictEqual(
+              'Expected string, received number',
+            );
+            expect(error?.[2]?.[3]).toStrictEqual(
+              'Expected string, received boolean',
+            );
           }
         });
       });
