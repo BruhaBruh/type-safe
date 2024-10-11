@@ -11,7 +11,6 @@ export default defineConfig({
       tsconfigPath: './tsconfig.json',
       insertTypesEntry: true,
     }),
-    preserveDirectives(),
   ],
   resolve: {
     alias: {
@@ -30,6 +29,7 @@ export default defineConfig({
         preserveModules: true,
         preserveModulesRoot: 'src',
       },
+      plugins: [preserveDirectives()],
       input: sync('src/**/*.ts', {
         ignore: ['src/**/*.d.ts', 'src/**/*.test.ts'],
       }).reduce((entries, file) => {
