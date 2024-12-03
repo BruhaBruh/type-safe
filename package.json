@@ -1,6 +1,6 @@
 {
   "name": "@bruhabruh/type-safe",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "type": "module",
   "description": "BruhaBruh Type Safe Library for TypeScript",
   "author": "BruhaBruh",
@@ -27,26 +27,26 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "type-fest": "^4.27.0"
+    "type-fest": "^4.30.0"
   },
   "devDependencies": {
-    "@bruhabruh/eslint-config": "^1.2.4",
-    "@bruhabruh/prettier-config": "^1.1.1",
-    "@bruhabruh/tsconfig": "^1.0.1",
-    "@commitlint/cli": "^19.5.0",
-    "@commitlint/config-conventional": "^19.5.0",
+    "@bruhabruh/eslint-config": "^1.2.5",
+    "@bruhabruh/prettier-config": "^1.1.2",
+    "@bruhabruh/tsconfig": "^1.0.2",
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
     "@commitlint/types": "^19.5.0",
-    "@types/node": "^22.9.0",
-    "eslint": "^9.14.0",
+    "@types/node": "^22.10.1",
+    "eslint": "^9.16.0",
     "glob": "^11.0.0",
-    "husky": "^9.1.6",
+    "husky": "^9.1.7",
     "nano-staged": "^0.8.0",
-    "prettier": "^3.3.3",
+    "prettier": "^3.4.1",
     "rollup-plugin-preserve-directives": "^0.4.0",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.11",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.2",
     "vite-plugin-dts": "^4.3.0",
-    "vitest": "^2.1.5"
+    "vitest": "^2.1.8"
   },
   "optionalDependencies": {
     "zod": "^3.23.8"
