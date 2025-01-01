@@ -1,6 +1,5 @@
-import { Primitive, UnknownArray, UnknownRecord } from 'type-fest';
+import { Schema, UnknownArray } from 'type-fest';
 import { z } from 'zod';
-import { ErrorMessage } from './error-message';
 
 const isObject = (pathFragment: string | number): pathFragment is string => {
   return typeof pathFragment === 'string';
@@ -39,20 +38,4 @@ export const zodStructuredError = <T>(
   return errors as ZodStructuredError<T>;
 };
 
-export type ZodStructuredError<T> = T extends Primitive
-  ? ErrorMessage
-  : T extends UnknownArray
-    ? StructuredArrayError<T>
-    : T extends UnknownRecord
-      ? StructuredObjectError<T>
-      : never;
-
-type StructuredArrayError<T extends UnknownArray> =
-  | ErrorMessage
-  | (ErrorMessage | ZodStructuredError<T[number]>)[];
-
-type StructuredObjectError<T extends UnknownRecord> =
-  | ErrorMessage
-  | {
-      [key in keyof T]?: ZodStructuredError<T[key]>;
-    };
+export type ZodStructuredError<T> = Schema<T, string | undefined>;
