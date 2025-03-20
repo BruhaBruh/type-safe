@@ -1,6 +1,11 @@
-import { Primitive, StringKeyOf, UnknownArray, UnknownRecord } from 'type-fest';
-import { z } from 'zod';
-import { ErrorMessage } from './error-message';
+import type {
+  Primitive,
+  StringKeyOf,
+  UnknownArray,
+  UnknownRecord,
+} from 'type-fest';
+import type { z } from 'zod';
+import type { ErrorMessage } from './error-message';
 
 export const zodFlattenError = <T>(
   error: z.ZodError<T>,

@@ -1,4 +1,5 @@
-import { Err, Ok, Result } from './result';
+import type { Result } from './result';
+import { Err, Ok } from './result';
 
 describe('Result', () => {
   const testCases: {

@@ -1,5 +1,6 @@
 import { AsyncResult } from '@/result';
-import { Option, Some } from './option';
+import type { Option } from './option';
+import { Some } from './option';
 
 export class AsyncOption<T> {
   readonly promise: Promise<Option<T>>;

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { None, Option, Some } from '../option';
+import type { Option } from '../option';
+import { None, Some } from '../option';
 import { AsyncResult } from './async-result';
 
 interface BaseResult<T, E> {

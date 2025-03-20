@@ -1,5 +1,5 @@
-import { Schema, UnknownArray } from 'type-fest';
-import { z } from 'zod';
+import type { Schema, UnknownArray } from 'type-fest';
+import type { z } from 'zod';
 
 const isObject = (pathFragment: string | number): pathFragment is string => {
   return typeof pathFragment === 'string';

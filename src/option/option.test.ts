@@ -1,5 +1,6 @@
 import { AsyncOption } from './async-option';
-import { None, Option, Some } from './option';
+import type { Option } from './option';
+import { None, Some } from './option';
 
 describe('Option', () => {
   const testCases: {
