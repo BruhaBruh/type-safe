@@ -1,6 +1,6 @@
 import type {
+  KeyAsString,
   Primitive,
-  StringKeyOf,
   UnknownArray,
   UnknownRecord,
 } from 'type-fest';
@@ -20,10 +20,10 @@ export const zodFlattenError = <T>(
     issue.path.forEach((pathFragment) => {
       const isKey = typeof pathFragment === 'string';
       if (path.length === 0) {
-        path.push(isKey ? pathFragment : `[${pathFragment}]`);
+        path.push(isKey ? pathFragment : `[${String(pathFragment)}]`);
         return;
       }
-      path.push(isKey ? `.${pathFragment}` : `[${pathFragment}]`);
+      path.push(isKey ? `.${pathFragment}` : `[${String(pathFragment)}]`);
     });
     errors[path.join('')] = issue.message;
   });
@@ -54,5 +54,5 @@ type FlattenObjectError<T extends UnknownRecord, K extends string | null> = {
   [key in keyof T]?: ErrorMessage;
 } & ZodFlattenError<
   T[keyof T],
-  K extends string ? `${K}.${StringKeyOf<T>}` : StringKeyOf<T>
+  K extends string ? `${K}.${KeyAsString<T>}` : KeyAsString<T>
 >;

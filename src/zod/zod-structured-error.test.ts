@@ -10,7 +10,7 @@ describe('zodStructuredError', () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(zodStructuredError(result.error)).toStrictEqual(
-          'Expected string, received number',
+          'Invalid input: expected string, received number',
         );
       }
     });
@@ -24,7 +24,7 @@ describe('zodStructuredError', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodStructuredError(result.error)).toStrictEqual(
-            'Expected array, received number',
+            'Invalid input: expected array, received number',
           );
         }
       });
@@ -35,7 +35,7 @@ describe('zodStructuredError', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodStructuredError(result.error)).toStrictEqual([
-            'Expected string, received number',
+            'Invalid input: expected string, received number',
           ]);
         }
       });
@@ -48,7 +48,7 @@ describe('zodStructuredError', () => {
           expect(zodStructuredError(result.error)).toStrictEqual([
             ,
             ,
-            'Expected string, received number',
+            'Invalid input: expected string, received number',
           ]);
         }
       });
@@ -59,8 +59,12 @@ describe('zodStructuredError', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           const error = zodStructuredError(result.error);
-          expect(error?.[1]).toStrictEqual('Expected string, received number');
-          expect(error?.[3]).toStrictEqual('Expected string, received boolean');
+          expect(error?.[1]).toStrictEqual(
+            'Invalid input: expected string, received number',
+          );
+          expect(error?.[3]).toStrictEqual(
+            'Invalid input: expected string, received boolean',
+          );
         }
       });
     });
@@ -73,7 +77,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual(
-              'Expected array, received number',
+              'Invalid input: expected array, received number',
             );
           }
         });
@@ -84,7 +88,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual([
-              'Expected array, received number',
+              'Invalid input: expected array, received number',
             ]);
           }
         });
@@ -97,7 +101,7 @@ describe('zodStructuredError', () => {
             expect(zodStructuredError(result.error)).toStrictEqual([
               ,
               ,
-              'Expected array, received number',
+              'Invalid input: expected array, received number',
             ]);
           }
         });
@@ -110,9 +114,11 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             const error = zodStructuredError(result.error);
-            expect(error?.[1]).toStrictEqual('Expected array, received number');
+            expect(error?.[1]).toStrictEqual(
+              'Invalid input: expected array, received number',
+            );
             expect(error?.[3]).toStrictEqual(
-              'Expected array, received boolean',
+              'Invalid input: expected array, received boolean',
             );
           }
         });
@@ -123,7 +129,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual([
-              ['Expected string, received number'],
+              ['Invalid input: expected string, received number'],
             ]);
           }
         });
@@ -136,7 +142,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual([
-              [, , 'Expected string, received number'],
+              [, , 'Invalid input: expected string, received number'],
             ]);
           }
         });
@@ -150,10 +156,10 @@ describe('zodStructuredError', () => {
           if (!result.success) {
             const error = zodStructuredError(result.error);
             expect(error?.[0]?.[1]).toStrictEqual(
-              'Expected string, received number',
+              'Invalid input: expected string, received number',
             );
             expect(error?.[2]?.[3]).toStrictEqual(
-              'Expected string, received boolean',
+              'Invalid input: expected string, received boolean',
             );
           }
         });
@@ -166,7 +172,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual(
-              'Expected array, received number',
+              'Invalid input: expected array, received number',
             );
           }
         });
@@ -177,7 +183,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual([
-              'Expected object, received number',
+              'Invalid input: expected object, received number',
             ]);
           }
         });
@@ -192,7 +198,7 @@ describe('zodStructuredError', () => {
             expect(zodStructuredError(result.error)).toStrictEqual([
               ,
               ,
-              'Expected object, received number',
+              'Invalid input: expected object, received number',
             ]);
           }
         });
@@ -205,7 +211,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual([
-              { 1: 'Expected string, received number' },
+              { 1: 'Invalid input: expected string, received number' },
             ]);
           }
         });
@@ -221,7 +227,7 @@ describe('zodStructuredError', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodStructuredError(result.error)).toStrictEqual(
-            'Expected object, received number',
+            'Invalid input: expected object, received number',
           );
         }
       });
@@ -232,7 +238,7 @@ describe('zodStructuredError', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodStructuredError(result.error)).toStrictEqual({
-            1: 'Expected string, received number',
+            1: 'Invalid input: expected string, received number',
           });
         }
       });
@@ -246,7 +252,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual(
-              'Expected object, received number',
+              'Invalid input: expected object, received number',
             );
           }
         });
@@ -259,7 +265,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual({
-              array: 'Expected array, received number',
+              array: 'Invalid input: expected array, received number',
             });
           }
         });
@@ -272,7 +278,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual({
-              array: [, , 'Expected string, received number'],
+              array: [, , 'Invalid input: expected string, received number'],
             });
           }
         });
@@ -287,7 +293,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual(
-              'Expected object, received number',
+              'Invalid input: expected object, received number',
             );
           }
         });
@@ -300,7 +306,7 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual({
-              primitives: 'Expected object, received number',
+              primitives: 'Invalid input: expected object, received number',
             });
           }
         });
@@ -313,7 +319,9 @@ describe('zodStructuredError', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodStructuredError(result.error)).toStrictEqual({
-              primitives: { 1: 'Expected string, received number' },
+              primitives: {
+                1: 'Invalid input: expected string, received number',
+              },
             });
           }
         });

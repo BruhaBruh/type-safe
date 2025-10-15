@@ -1,11 +1,15 @@
 import type { Schema, UnknownArray } from 'type-fest';
 import type { z } from 'zod';
 
-const isObject = (pathFragment: string | number): pathFragment is string => {
+const isObject = (
+  pathFragment: string | number | symbol,
+): pathFragment is string => {
   return typeof pathFragment === 'string';
 };
 
-const isArray = (pathFragment: string | number): pathFragment is number => {
+const isArray = (
+  pathFragment: string | number | symbol,
+): pathFragment is number => {
   return typeof pathFragment === 'number';
 };
 
@@ -23,12 +27,16 @@ export const zodStructuredError = <T>(
     issue.path.forEach((pathFragment, index, arr) => {
       const nextPathFragment = arr[index + 1];
       if (isObject(nextPathFragment)) {
-        if (target[pathFragment] === undefined) target[pathFragment] = {};
+        if (target[pathFragment] === undefined) {
+          target[pathFragment] = {};
+        }
         target = target[pathFragment];
         return;
       }
       if (isArray(nextPathFragment)) {
-        if (target[pathFragment] === undefined) target[pathFragment] = [];
+        if (target[pathFragment] === undefined) {
+          target[pathFragment] = [];
+        }
         target = target[pathFragment] as UnknownArray;
         return;
       }

@@ -9,7 +9,7 @@ describe('zodFlatten', () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(zodFlattenError(result.error)).toStrictEqual(
-          'Expected string, received number',
+          'Invalid input: expected string, received number',
         );
       }
     });
@@ -23,7 +23,7 @@ describe('zodFlatten', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodFlattenError(result.error)).toStrictEqual(
-            'Expected array, received number',
+            'Invalid input: expected array, received number',
           );
         }
       });
@@ -34,7 +34,7 @@ describe('zodFlatten', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodFlattenError(result.error)).toStrictEqual({
-            '[0]': 'Expected string, received number',
+            '[0]': 'Invalid input: expected string, received number',
           });
         }
       });
@@ -45,7 +45,7 @@ describe('zodFlatten', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodFlattenError(result.error)).toStrictEqual({
-            '[2]': 'Expected string, received number',
+            '[2]': 'Invalid input: expected string, received number',
           });
         }
       });
@@ -56,8 +56,8 @@ describe('zodFlatten', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodFlattenError(result.error)).toStrictEqual({
-            '[1]': 'Expected string, received number',
-            '[3]': 'Expected string, received boolean',
+            '[1]': 'Invalid input: expected string, received number',
+            '[3]': 'Invalid input: expected string, received boolean',
           });
         }
       });
@@ -71,7 +71,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual(
-              'Expected array, received number',
+              'Invalid input: expected array, received number',
             );
           }
         });
@@ -82,7 +82,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              '[0]': 'Expected array, received number',
+              '[0]': 'Invalid input: expected array, received number',
             });
           }
         });
@@ -93,7 +93,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              '[2]': 'Expected array, received number',
+              '[2]': 'Invalid input: expected array, received number',
             });
           }
         });
@@ -106,8 +106,8 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              '[1]': 'Expected array, received number',
-              '[3]': 'Expected array, received boolean',
+              '[1]': 'Invalid input: expected array, received number',
+              '[3]': 'Invalid input: expected array, received boolean',
             });
           }
         });
@@ -118,7 +118,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              '[0][0]': 'Expected string, received number',
+              '[0][0]': 'Invalid input: expected string, received number',
             });
           }
         });
@@ -131,7 +131,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              '[0][2]': 'Expected string, received number',
+              '[0][2]': 'Invalid input: expected string, received number',
             });
           }
         });
@@ -144,8 +144,8 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              '[0][1]': 'Expected string, received number',
-              '[2][3]': 'Expected string, received boolean',
+              '[0][1]': 'Invalid input: expected string, received number',
+              '[2][3]': 'Invalid input: expected string, received boolean',
             });
           }
         });
@@ -158,7 +158,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual(
-              'Expected array, received number',
+              'Invalid input: expected array, received number',
             );
           }
         });
@@ -169,7 +169,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              '[0]': 'Expected object, received number',
+              '[0]': 'Invalid input: expected object, received number',
             });
           }
         });
@@ -182,7 +182,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              '[2]': 'Expected object, received number',
+              '[2]': 'Invalid input: expected object, received number',
             });
           }
         });
@@ -195,7 +195,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              '[0].1': 'Expected string, received number',
+              '[0].1': 'Invalid input: expected string, received number',
             });
           }
         });
@@ -211,7 +211,7 @@ describe('zodFlatten', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodFlattenError(result.error)).toStrictEqual(
-            'Expected object, received number',
+            'Invalid input: expected object, received number',
           );
         }
       });
@@ -222,7 +222,7 @@ describe('zodFlatten', () => {
         expect(result.success).toBe(false);
         if (!result.success) {
           expect(zodFlattenError(result.error)).toStrictEqual({
-            1: 'Expected string, received number',
+            1: 'Invalid input: expected string, received number',
           });
         }
       });
@@ -236,7 +236,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual(
-              'Expected object, received number',
+              'Invalid input: expected object, received number',
             );
           }
         });
@@ -249,7 +249,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              array: 'Expected array, received number',
+              array: 'Invalid input: expected array, received number',
             });
           }
         });
@@ -262,7 +262,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              'array[2]': 'Expected string, received number',
+              'array[2]': 'Invalid input: expected string, received number',
             });
           }
         });
@@ -277,7 +277,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual(
-              'Expected object, received number',
+              'Invalid input: expected object, received number',
             );
           }
         });
@@ -290,7 +290,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              primitives: 'Expected object, received number',
+              primitives: 'Invalid input: expected object, received number',
             });
           }
         });
@@ -303,7 +303,7 @@ describe('zodFlatten', () => {
           expect(result.success).toBe(false);
           if (!result.success) {
             expect(zodFlattenError(result.error)).toStrictEqual({
-              'primitives.1': 'Expected string, received number',
+              'primitives.1': 'Invalid input: expected string, received number',
             });
           }
         });
