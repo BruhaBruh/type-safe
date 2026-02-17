@@ -1,62 +1,55 @@
 {
-  "name": "@bruhabruh/type-safe",
-  "version": "1.2.4",
-  "type": "module",
-  "description": "BruhaBruh Type Safe Library for TypeScript",
-  "author": "BruhaBruh",
-  "license": "MIT",
-  "keywords": [],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bruhabruh/type-safe"
-  },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsc && vite build",
-    "lint": "pnpm run lint:js && pnpm run lint:other",
-    "lint:js": "eslint . --report-unused-disable-directives",
-    "lint:other": "prettier --check '**/*.{md,yaml,yml,json}'",
-    "test": "vitest",
-    "coverage": "vitest run --coverage",
-    "prettier": "prettier '**/*.{md,yaml,yml,json}'",
-    "prepare": "husky"
-  },
-  "dependencies": {
-    "type-fest": "^5.1.0"
-  },
-  "devDependencies": {
-    "@bruhabruh/eslint-config": "^1.3.6",
-    "@bruhabruh/prettier-config": "^1.1.5",
-    "@bruhabruh/tsconfig": "^1.0.4",
-    "@commitlint/cli": "^20.1.0",
-    "@commitlint/config-conventional": "^20.0.0",
-    "@commitlint/types": "^20.0.0",
-    "@types/node": "^24.7.2",
-    "eslint": "^9.37.0",
-    "glob": "^11.0.3",
-    "husky": "^9.1.7",
-    "nano-staged": "^0.8.0",
-    "prettier": "^3.6.2",
-    "rollup-plugin-preserve-directives": "^0.4.0",
-    "typescript": "^5.9.3",
-    "vite": "^7.1.10",
-    "vite-plugin-dts": "^4.5.4",
-    "vitest": "^3.2.4"
-  },
-  "optionalDependencies": {
-    "zod": "^4.1.12"
-  },
-  "nano-staged": {
-    "*.{js,ts}": [
-      "eslint --fix --quiet --report-unused-disable-directives"
-    ],
-    "*.{md,yaml,yml,json}": [
-      "prettier --write"
-    ]
-  }
+	"name": "@bruhabruh/type-safe",
+	"type": "module",
+	"version": "1.3.0",
+	"description": "BruhaBruh Type Safe Library for TypeScript",
+	"author": "BruhaBruh",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bruhabruh/type-safe"
+	},
+	"keywords": [],
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc && vite build",
+		"lint": "eslint . --report-unused-disable-directives",
+		"test": "vitest",
+		"coverage": "vitest run --coverage",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"type-fest": "^5.4.4"
+	},
+	"optionalDependencies": {
+		"zod": "^4.3.6"
+	},
+	"devDependencies": {
+		"@antfu/eslint-config": "^7.4.3",
+		"@bruhabruh/tsconfig": "^1.0.4",
+		"@commitlint/cli": "^20.4.1",
+		"@commitlint/config-conventional": "^20.4.1",
+		"@commitlint/types": "^20.4.0",
+		"@types/node": "^25.2.3",
+		"eslint": "^10.0.0",
+		"eslint-plugin-format": "^1.4.0",
+		"glob": "^13.0.4",
+		"husky": "^9.1.7",
+		"nano-staged": "^0.9.0",
+		"rollup-plugin-preserve-directives": "^0.4.0",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.1",
+		"vite-plugin-dts": "^4.5.4",
+		"vitest": "^4.0.18"
+	},
+	"nano-staged": {
+		"*.{js,ts,md,yaml,yml,json}": [
+			"eslint --fix --quiet --report-unused-disable-directives"
+		]
+	}
 }

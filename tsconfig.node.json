@@ -1,34 +1,34 @@
 {
-  "extends": "@bruhabruh/tsconfig",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "rootDir": "./src",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "composite": true,
-    "allowSyntheticDefaultImports": true,
+	"extends": "@bruhabruh/tsconfig",
+	"compilerOptions": {
+		"composite": true,
+		"target": "ESNext",
+		"jsx": "react-jsx",
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"useDefineForClassFields": true,
+		"baseUrl": ".",
+		"rootDir": "./src",
+		"module": "ESNext",
 
-    "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
+		"moduleResolution": "Bundler",
+		"paths": {
+			"@/*": ["./src/*"]
+		},
+		"resolveJsonModule": true,
+		"allowImportingTsExtensions": true,
 
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
+		"strict": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
 
-    "declaration": true,
-    "declarationMap": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
-  }
+		"declaration": true,
+		"declarationMap": true,
+		"noEmit": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true,
+		"skipLibCheck": true
+	}
 }

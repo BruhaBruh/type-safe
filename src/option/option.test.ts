@@ -1,407 +1,166 @@
-import { AsyncOption } from './async-option';
-import type { Option } from './option';
-import { None, Some } from './option';
+import { describe, expect, it, vi } from "vitest";
+import { None, Option, Some } from "./option"; // путь поправь
 
-describe('Option', () => {
-  const testCases: {
-    value: unknown;
-    option: Option<unknown>;
-    name: string;
-    isSome: boolean;
-  }[] = [
-    {
-      value: 1,
-      option: Some(1),
-      name: 'Some(1)',
-      isSome: true,
-    },
-    {
-      value: 'raw',
-      option: Some('raw'),
-      name: 'Some("raw")',
-      isSome: true,
-    },
-    {
-      value: 'go',
-      option: Some('go'),
-      name: 'Some("go")',
-      isSome: true,
-    },
-    {
-      value: true,
-      option: Some(true),
-      name: 'Some(true)',
-      isSome: true,
-    },
-    {
-      value: false,
-      option: Some(false),
-      name: 'Some(false)',
-      isSome: true,
-    },
-    {
-      value: null,
-      option: Some(null),
-      name: 'Some(null)',
-      isSome: true,
-    },
-    {
-      value: undefined,
-      option: Some(undefined),
-      name: 'Some(undefined)',
-      isSome: true,
-    },
-    {
-      value: NaN,
-      option: Some(NaN),
-      name: 'Some(NaN)',
-      isSome: true,
-    },
-    {
-      value: { test: true },
-      option: Some({ test: true }),
-      name: 'Some({"test":true})',
-      isSome: true,
-    },
-    {
-      value: undefined,
-      option: None,
-      name: 'None',
-      isSome: false,
-    },
-  ];
+describe("some", () => {
+	it("isSome/isNone работают", () => {
+		const s = Some(1);
+		expect(s.isSome()).toBe(true);
+		expect(s.isNone()).toBe(false);
+	});
 
-  describe('isSome', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        test(`should be ${isSome}`, () => {
-          expect(option.isSome()).toStrictEqual(isSome);
-        });
-      });
-    });
-  });
+	it("unwrap возвращает значение", () => {
+		expect(Some(42).unwrap()).toBe(42);
+	});
 
-  describe('isSomeAnd', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        test(`should be ${isSome}: truthy fn`, () => {
-          expect(option.isSomeAnd(() => true)).toStrictEqual(isSome);
-        });
+	it("expect возвращает значение", () => {
+		expect(Some("hello").expect("err")).toBe("hello");
+	});
 
-        test(`should be false: falsy fn`, () => {
-          expect(option.isSomeAnd(() => false)).toStrictEqual(false);
-        });
-      });
-    });
-  });
+	it("map трансформирует значение", () => {
+		const result = Some(2).map(x => x * 2);
+		expect(result.unwrap()).toBe(4);
+	});
 
-  describe('isNone', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        test(`should be ${!isSome}`, () => {
-          expect(option.isNone()).toStrictEqual(!isSome);
-        });
-      });
-    });
-  });
+	it("andThen чейнит Option", () => {
+		const result = Some(2).andThen(x => Some(x + 3));
+		expect(result.unwrap()).toBe(5);
+	});
 
-  describe('isNoneOr', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        test(`should be true: truthy fn`, () => {
-          expect(option.isNoneOr(() => true)).toStrictEqual(true);
-        });
+	it("or игнорирует fallback", () => {
+		const result = Some(1).or(Some(2));
+		expect(result.unwrap()).toBe(1);
+	});
 
-        test(`should be ${!isSome}: falsy fn`, () => {
-          expect(option.isNoneOr(() => false)).toStrictEqual(!isSome);
-        });
-      });
-    });
-  });
+	it("orElse игнорирует fallback функцию (ленивость)", () => {
+		const spy = vi.fn(() => Some(2));
+		const result = Some(1).orElse(spy);
 
-  describe('and', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        const opt = Some(100);
-        test(`should be ${isSome ? opt : None}: ${opt}`, () => {
-          const result = option.and(opt);
-          expect(result.isSome()).toStrictEqual(isSome);
-          if (isSome) {
-            expect(result.unwrap()).toStrictEqual(100);
-          }
-        });
+		expect(result.unwrap()).toBe(1);
+		expect(spy).not.toHaveBeenCalled();
+	});
 
-        test(`should be ${None}: ${None}`, () => {
-          const result = option.and(None);
-          expect(result.isSome()).toStrictEqual(false);
-        });
-      });
-    });
-  });
+	it("unwrapOr игнорирует дефолт", () => {
+		expect(Some(10).unwrapOr(0)).toBe(10);
+	});
 
-  describe('andThen', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        const opt = Some(100);
-        test(`should be ${isSome ? opt : None}: ${opt}`, () => {
-          const result = option.andThen(() => opt);
-          expect(result.isSome()).toStrictEqual(isSome);
-          if (isSome) {
-            expect(result.unwrap()).toStrictEqual(100);
-          }
-        });
+	it("unwrapOrElse игнорирует функцию", () => {
+		const spy = vi.fn(() => 0);
+		const result = Some(10).unwrapOrElse(spy);
 
-        test(`should be ${None}: ${None}`, () => {
-          const result = option.andThen(() => None);
-          expect(result.isSome()).toStrictEqual(false);
-        });
-      });
-    });
-  });
+		expect(result).toBe(10);
+		expect(spy).not.toHaveBeenCalled();
+	});
 
-  describe('or', () => {
-    testCases.forEach(({ name, option, isSome, value }) => {
-      describe(name, () => {
-        const opt = Some(100);
-        test(`should be ${isSome ? option : opt}: ${opt}`, () => {
-          const result = option.or(opt);
-          expect(result.isSome()).toStrictEqual(true);
-          if (isSome) {
-            expect(result.unwrap()).toStrictEqual(value);
-          } else {
-            expect(result.unwrap()).toStrictEqual(100);
-          }
-        });
+	it("match вызывает ветку Some", () => {
+		const result = Some(3).match({
+			Some: v => v * 3,
+			None: () => 0,
+		});
+		expect(result).toBe(9);
+	});
 
-        test(`should be ${isSome ? option : None}: ${None}`, () => {
-          const result = option.or(None);
-          expect(result.isSome()).toStrictEqual(isSome);
-          if (isSome) {
-            expect(result.unwrap()).toStrictEqual(value);
-          }
-        });
-      });
-    });
-  });
+	it("let вызывает функцию", () => {
+		const spy = vi.fn();
+		Some(5).let(spy);
+		expect(spy).toHaveBeenCalledWith(5);
+	});
 
-  describe('orElse', () => {
-    testCases.forEach(({ name, option, isSome, value }) => {
-      describe(name, () => {
-        const opt = Some(100);
-        test(`should be ${isSome ? option : opt}: ${opt}`, () => {
-          const result = option.orElse(() => opt);
-          expect(result.isSome()).toStrictEqual(true);
-          if (isSome) {
-            expect(result.unwrap()).toStrictEqual(value);
-          } else {
-            expect(result.unwrap()).toStrictEqual(100);
-          }
-        });
+	it("кидает если null", () => {
+		expect(() => Some(null as any)).toThrow();
+	});
 
-        test(`should be ${isSome ? option : None}: ${None}`, () => {
-          const result = option.orElse(() => None);
-          expect(result.isSome()).toStrictEqual(isSome);
-          if (isSome) {
-            expect(result.unwrap()).toStrictEqual(value);
-          }
-        });
-      });
-    });
-  });
+	it("кидает если undefined", () => {
+		expect(() => Some(undefined as any)).toThrow();
+	});
+});
 
-  describe('map', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        const opt = 100;
-        test(`should be ${isSome ? opt : None}: ${opt}`, () => {
-          const mapped = option.map(() => opt);
-          expect(mapped.isSome()).toStrictEqual(isSome);
-          if (isSome) {
-            expect(mapped.unwrap()).toStrictEqual(opt);
-          }
-        });
-      });
-    });
-  });
+describe("none", () => {
+	it("isSome/isNone работают", () => {
+		const n = None<number>();
+		expect(n.isSome()).toBe(false);
+		expect(n.isNone()).toBe(true);
+	});
 
-  describe('mapOr', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        const opt = 100;
-        const defaultOpt = 1000;
-        test(`should be ${isSome ? opt : defaultOpt}: ${defaultOpt} ${opt}`, () => {
-          const mapped = option.mapOr(defaultOpt, () => opt);
-          if (isSome) {
-            expect(mapped).toStrictEqual(opt);
-          } else {
-            expect(mapped).toStrictEqual(defaultOpt);
-          }
-        });
-      });
-    });
-  });
+	it("unwrap кидает", () => {
+		expect(() => None<number>().unwrap()).toThrow();
+	});
 
-  describe('mapOrElse', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        const opt = 100;
-        const defaultOpt = 1000;
-        test(`should be ${isSome ? opt : defaultOpt}: ${defaultOpt} ${opt}`, () => {
-          const mapped = option.mapOrElse(
-            () => defaultOpt,
-            () => opt,
-          );
-          if (isSome) {
-            expect(mapped).toStrictEqual(opt);
-          } else {
-            expect(mapped).toStrictEqual(defaultOpt);
-          }
-        });
-      });
-    });
-  });
+	it("expect кидает с сообщением", () => {
+		expect(() => None<number>().expect("boom")).toThrow("boom");
+	});
 
-  describe('expect', () => {
-    testCases.forEach(({ name, option, isSome, value }) => {
-      describe(name, () => {
-        const msg = 'Some Error';
-        test(`should ${isSome ? `be ${value}` : `throw "${msg}"`}: "${msg}"`, () => {
-          if (isSome) {
-            const v = option.expect(msg);
-            expect(v).toStrictEqual(value);
-          } else {
-            expect(() => option.expect(msg)).toThrowError(msg);
-          }
-        });
-      });
-    });
-  });
+	it("map не вызывает функцию и возвращает None", () => {
+		const spy = vi.fn((x: number) => x * 2);
+		const result = None<number>().map(spy);
 
-  describe('inspect', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        test(`should be called ${isSome ? 1 : 0} time(s)`, () => {
-          const fn = vi.fn();
-          option.inspect(fn);
-          expect(fn).toBeCalledTimes(isSome ? 1 : 0);
-        });
-      });
-    });
-  });
+		expect(spy).not.toHaveBeenCalled();
+		expect(result.isNone()).toBe(true);
+	});
 
-  describe('unwrap', () => {
-    testCases.forEach(({ name, option, isSome, value }) => {
-      describe(name, () => {
-        test(`should ${isSome ? `be ${value}` : `throw "Tried to unwrap None"`}`, () => {
-          if (isSome) {
-            const v = option.unwrap();
-            expect(v).toStrictEqual(value);
-          } else {
-            expect(() => option.unwrap()).toThrowError('Tried to unwrap None');
-          }
-        });
-      });
-    });
-  });
+	it("andThen не вызывает функцию и возвращает None", () => {
+		const spy = vi.fn((x: number) => Some(x * 2));
+		const result = None<number>().andThen(spy);
 
-  describe('unwrapOr', () => {
-    testCases.forEach(({ name, option, isSome, value }) => {
-      describe(name, () => {
-        const defaultValue = 100;
-        test(`should be ${isSome ? value : defaultValue}: ${defaultValue}`, () => {
-          const v = option.unwrapOr(defaultValue);
-          expect(v).toStrictEqual(isSome ? value : defaultValue);
-        });
-      });
-    });
-  });
+		expect(spy).not.toHaveBeenCalled();
+		expect(result.isNone()).toBe(true);
+	});
 
-  describe('unwrapOrElse', () => {
-    testCases.forEach(({ name, option, isSome, value }) => {
-      describe(name, () => {
-        const defaultValue = 100;
-        test(`should be ${isSome ? value : defaultValue}: ${defaultValue}`, () => {
-          const v = option.unwrapOrElse(() => defaultValue);
-          expect(v).toStrictEqual(isSome ? value : defaultValue);
-        });
-      });
-    });
-  });
+	it("or возвращает fallback", () => {
+		const result = None<number>().or(Some(5));
+		expect(result.unwrap()).toBe(5);
+	});
 
-  describe('filter', () => {
-    testCases.forEach(({ name, option, isSome }) => {
-      describe(name, () => {
-        test(`should be ${isSome ? option : None}: true`, () => {
-          const v = option.filter(() => true);
-          expect(v.isSome()).toStrictEqual(isSome);
-        });
-        test(`should be ${None}: false`, () => {
-          const v = option.filter(() => false);
-          expect(v.isSome()).toStrictEqual(false);
-        });
-      });
-    });
-  });
+	it("orElse вызывает функцию", () => {
+		const spy = vi.fn(() => Some(6));
+		const result = None<number>().orElse(spy);
 
-  describe('okOr', () => {
-    testCases.forEach(({ name, option, isSome, value }) => {
-      describe(name, () => {
-        const err = 'Some Error';
-        test(`should be ${isSome ? `Ok(${value})` : `Err("${err}")`}: "${err}"`, () => {
-          const result = option.okOr(err);
-          if (isSome) {
-            expect(result.isOk()).toStrictEqual(true);
-            expect(result.unwrap()).toStrictEqual(value);
-          } else {
-            expect(result.isErr()).toStrictEqual(true);
-            expect(result.unwrapErr()).toStrictEqual(err);
-          }
-        });
-      });
-    });
-  });
+		expect(spy).toHaveBeenCalled();
+		expect(result.unwrap()).toBe(6);
+	});
 
-  describe('okOrElse', () => {
-    testCases.forEach(({ name, option, isSome, value }) => {
-      describe(name, () => {
-        const err = 'Some Error';
-        test(`should be ${isSome ? `Ok(${value})` : `Err("${err}")`}: "${err}"`, () => {
-          const result = option.okOrElse(() => err);
-          if (isSome) {
-            expect(result.isOk()).toStrictEqual(true);
-            expect(result.unwrap()).toStrictEqual(value);
-          } else {
-            expect(result.isErr()).toStrictEqual(true);
-            expect(result.unwrapErr()).toStrictEqual(err);
-          }
-        });
-      });
-    });
-  });
+	it("unwrapOr возвращает дефолт", () => {
+		expect(None<number>().unwrapOr(10)).toBe(10);
+	});
 
-  describe('toAsyncOption', () => {
-    testCases.forEach(({ name, option, isSome, value }) => {
-      describe(name, () => {
-        test(`should be AsyncOption`, async () => {
-          const asyncOption = option.toAsyncOption();
-          expect(asyncOption).toBeInstanceOf(AsyncOption);
-          const awaited = await asyncOption.promise;
-          expect(awaited.isSome()).toStrictEqual(isSome);
-          if (isSome) {
-            expect(awaited.unwrap()).toStrictEqual(value);
-          }
-        });
-      });
-    });
-  });
+	it("unwrapOrElse вызывает функцию", () => {
+		const spy = vi.fn(() => 11);
+		const result = None<number>().unwrapOrElse(spy);
 
-  describe('toString', () => {
-    testCases.forEach(({ name, option }) => {
-      describe(name, () => {
-        test(`should be ${name}`, async () => {
-          expect(option.toString()).toStrictEqual(name);
-        });
-      });
-    });
-  });
+		expect(spy).toHaveBeenCalled();
+		expect(result).toBe(11);
+	});
+
+	it("match вызывает ветку None", () => {
+		const result = None<number>().match({
+			Some: () => 1,
+			None: () => 2,
+		});
+		expect(result).toBe(2);
+	});
+
+	it("let ничего не делает", () => {
+		const spy = vi.fn();
+		None<number>().let(spy);
+		expect(spy).not.toHaveBeenCalled();
+	});
+});
+
+describe("option.from", () => {
+	it("создаёт Some из значения", () => {
+		const result = Option.from(5);
+		expect(result.isSome()).toBe(true);
+		expect(result.unwrap()).toBe(5);
+	});
+
+	it("создаёт None из null", () => {
+		const result = Option.from(null);
+		expect(result.isNone()).toBe(true);
+		expect(() => result.unwrap()).toThrow();
+	});
+
+	it("создаёт None из undefined", () => {
+		const result = Option.from(undefined);
+		expect(result.isNone()).toBe(true);
+		expect(() => result.unwrap()).toThrow();
+	});
 });

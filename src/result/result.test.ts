@@ -1,514 +1,237 @@
-import { AsyncResult } from './async-result';
-import type { Result } from './result';
-import { Err, Ok } from './result';
+import { describe, expect, it, vi } from "vitest";
+import { Err, Ok, Result } from "./result"; // путь поправь
 
-describe('Result', () => {
-  const testCases: {
-    value: unknown;
-    result: Result<unknown, unknown>;
-    name: string;
-    isOk: boolean;
-  }[] = [
-    {
-      value: 1,
-      result: Ok(1),
-      name: 'Ok(1)',
-      isOk: true,
-    },
-    {
-      value: 1,
-      result: Err(1),
-      name: 'Err(1)',
-      isOk: false,
-    },
-    {
-      value: 'raw',
-      result: Ok('raw'),
-      name: 'Ok("raw")',
-      isOk: true,
-    },
-    {
-      value: 'raw',
-      result: Err('raw'),
-      name: 'Err("raw")',
-      isOk: false,
-    },
-    {
-      value: 'go',
-      result: Ok('go'),
-      name: 'Ok("go")',
-      isOk: true,
-    },
-    {
-      value: 'go',
-      result: Err('go'),
-      name: 'Err("go")',
-      isOk: false,
-    },
-    {
-      value: true,
-      result: Ok(true),
-      name: 'Ok(true)',
-      isOk: true,
-    },
-    {
-      value: true,
-      result: Err(true),
-      name: 'Err(true)',
-      isOk: false,
-    },
-    {
-      value: false,
-      result: Ok(false),
-      name: 'Ok(false)',
-      isOk: true,
-    },
-    {
-      value: false,
-      result: Err(false),
-      name: 'Err(false)',
-      isOk: false,
-    },
-    {
-      value: null,
-      result: Ok(null),
-      name: 'Ok(null)',
-      isOk: true,
-    },
-    {
-      value: null,
-      result: Err(null),
-      name: 'Err(null)',
-      isOk: false,
-    },
-    {
-      value: undefined,
-      result: Ok(undefined),
-      name: 'Ok(undefined)',
-      isOk: true,
-    },
-    {
-      value: undefined,
-      result: Err(undefined),
-      name: 'Err(undefined)',
-      isOk: false,
-    },
-    {
-      value: NaN,
-      result: Ok(NaN),
-      name: 'Ok(NaN)',
-      isOk: true,
-    },
-    {
-      value: NaN,
-      result: Err(NaN),
-      name: 'Err(NaN)',
-      isOk: false,
-    },
-    {
-      value: { test: true },
-      result: Ok({ test: true }),
-      name: 'Ok({"test":true})',
-      isOk: true,
-    },
-    {
-      value: { test: true },
-      result: Err({ test: true }),
-      name: 'Err({"test":true})',
-      isOk: false,
-    },
-  ];
+describe("ok", () => {
+	it("isOk/isErr работают", () => {
+		const r = Ok<number, string>(5);
+		expect(r.isOk()).toBe(true);
+		expect(r.isErr()).toBe(false);
+	});
 
-  describe('isOk', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        test(`should be ${isOk}`, () => {
-          expect(result.isOk()).toStrictEqual(isOk);
-        });
-      });
-    });
-  });
+	it("unwrap/expect возвращают значение", () => {
+		const r = Ok<number, string>(10);
+		expect(r.unwrap()).toBe(10);
+		expect(r.expect("err")).toBe(10);
+	});
 
-  describe('isOkAnd', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        test(`should be ${isOk}: truthy fn`, () => {
-          expect(result.isOkAnd(() => true)).toStrictEqual(isOk);
-        });
+	it("map трансформирует значение", () => {
+		const r = Ok<number, string>(2).map(x => x * 3);
+		expect(r.unwrap()).toBe(6);
+	});
 
-        test(`should be false: falsy fn`, () => {
-          expect(result.isOkAnd(() => false)).toStrictEqual(false);
-        });
-      });
-    });
-  });
+	it("mapErr игнорируется", () => {
+		const r = Ok<number, string>(2).mapErr(() => "boom");
+		expect(r.unwrap()).toBe(2);
+	});
 
-  describe('isErr', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        test(`should be ${!isOk}`, () => {
-          expect(result.isErr()).toStrictEqual(!isOk);
-        });
-      });
-    });
-  });
+	it("andThen чейнит", () => {
+		const r = Ok<number, string>(2).andThen(x => Ok(x + 5));
+		expect(r.unwrap()).toBe(7);
+	});
 
-  describe('isErrAnd', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        test(`should be ${!isOk}: truthy fn`, () => {
-          expect(result.isErrAnd(() => true)).toStrictEqual(!isOk);
-        });
+	it("or/orElse игнорируются", () => {
+		expect(Ok<number, string>(1).or(Ok(2)).unwrap()).toBe(1);
 
-        test(`should be false: falsy fn`, () => {
-          expect(result.isErrAnd(() => false)).toStrictEqual(false);
-        });
-      });
-    });
-  });
+		const spy = vi.fn(() => Ok<number, string>(2));
+		const r = Ok<number, string>(1).orElse(spy);
+		expect(r.unwrap()).toBe(1);
+		expect(spy).not.toHaveBeenCalled();
+	});
 
-  describe('and', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        const ok = Ok(100);
-        const err = Err(0);
+	it("unwrapErr кидает", () => {
+		expect(() => Ok<number, string>(1).unwrapErr()).toThrow();
+	});
 
-        test(`should be ${isOk ? ok : result}: ${ok}`, () => {
-          const res = result.and(ok);
-          expect(res.isOk()).toStrictEqual(isOk);
-          if (isOk) {
-            expect(res.unwrap()).toStrictEqual(100);
-          } else {
-            expect(res.unwrapErr()).toStrictEqual(result.unwrapErr());
-          }
-        });
+	it("unwrapOr/unwrapOrElse игнорируют дефолт", () => {
+		expect(Ok<number, string>(5).unwrapOr(0)).toBe(5);
 
-        test(`should be ${isOk ? err : result}: ${err}`, () => {
-          const res = result.and(err);
-          expect(res.isErr()).toStrictEqual(true);
-          if (isOk) {
-            expect(res.unwrapErr()).toStrictEqual(0);
-          } else {
-            expect(res.unwrapErr()).toStrictEqual(result.unwrapErr());
-          }
-        });
-      });
-    });
-  });
+		const spy = vi.fn(() => 0);
+		const r = Ok<number, string>(5).unwrapOrElse(spy);
+		expect(r).toBe(5);
+		expect(spy).not.toHaveBeenCalled();
+	});
 
-  describe('andThen', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        const ok = Ok(100);
-        const err = Err(0);
+	it("match вызывает Ok ветку", () => {
+		const r = Ok<number, string>(3).match({
+			Ok: v => v * 2,
+			Err: () => 0,
+		});
+		expect(r).toBe(6);
+	});
 
-        test(`should be ${isOk ? ok : result}: ${ok}`, () => {
-          const res = result.andThen(() => ok);
-          expect(res.isOk()).toStrictEqual(isOk);
-          if (isOk) {
-            expect(res.unwrap()).toStrictEqual(100);
-          } else {
-            expect(res.unwrapErr()).toStrictEqual(result.unwrapErr());
-          }
-        });
+	it("toOption возвращает Some", () => {
+		const opt = Ok<number, string>(5).toOption();
+		expect(opt.isSome()).toBe(true);
+		expect(opt.unwrap()).toBe(5);
+	});
+});
 
-        test(`should be ${isOk ? err : result}: ${err}`, () => {
-          const res = result.andThen(() => err);
-          expect(res.isErr()).toStrictEqual(true);
-          if (isOk) {
-            expect(res.unwrapErr()).toStrictEqual(0);
-          } else {
-            expect(res.unwrapErr()).toStrictEqual(result.unwrapErr());
-          }
-        });
-      });
-    });
-  });
+describe("err", () => {
+	it("isOk/isErr работают", () => {
+		const r = Err<number, string>("boom");
+		expect(r.isOk()).toBe(false);
+		expect(r.isErr()).toBe(true);
+	});
 
-  describe('or', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        const ok = Ok(100);
-        const err = Err(0);
+	it("unwrap кидает с сообщением", () => {
+		expect(() => Err<number, string>("boom").unwrap()).toThrow();
+	});
 
-        test(`should be ${isOk ? result : ok}: ${ok}`, () => {
-          const res = result.or(ok);
-          expect(res.isOk()).toStrictEqual(true);
-          if (isOk) {
-            expect(res.unwrap()).toStrictEqual(isOk ? result.unwrap() : 100);
-          }
-        });
+	it("expect кидает с сообщением", () => {
+		expect(() => Err<number, string>("boom").expect("fail")).toThrow("fail");
+	});
 
-        test(`should be ${isOk ? result : err}: ${err}`, () => {
-          const res = result.or(err);
-          expect(res.isOk()).toStrictEqual(isOk);
-          if (isOk) {
-            expect(res.unwrap()).toStrictEqual(result.unwrap());
-          } else {
-            expect(res.unwrapErr()).toStrictEqual(0);
-          }
-        });
-      });
-    });
-  });
+	it("unwrapErr возвращает ошибку", () => {
+		const r = Err<number, string>("boom");
+		expect(r.unwrapErr()).toBe("boom");
+	});
 
-  describe('orElse', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        const ok = Ok(100);
-        const err = Err(0);
+	it("map игнорируется", () => {
+		const r = Err<number, string>("boom").map(x => x * 2);
+		expect(r.isErr()).toBe(true);
+	});
 
-        test(`should be ${isOk ? result : ok}: ${ok}`, () => {
-          const res = result.orElse(() => ok);
-          expect(res.isOk()).toStrictEqual(true);
-          if (isOk) {
-            expect(res.unwrap()).toStrictEqual(isOk ? result.unwrap() : 100);
-          }
-        });
+	it("mapErr трансформирует ошибку", () => {
+		const r = Err<number, string>("boom").mapErr(e => e.toUpperCase());
+		expect(r.unwrapErr()).toBe("BOOM");
+	});
 
-        test(`should be ${isOk ? result : err}: ${err}`, () => {
-          const res = result.orElse(() => err);
-          expect(res.isOk()).toStrictEqual(isOk);
-          if (isOk) {
-            expect(res.unwrap()).toStrictEqual(result.unwrap());
-          } else {
-            expect(res.unwrapErr()).toStrictEqual(0);
-          }
-        });
-      });
-    });
-  });
+	it("andThen игнорируется", () => {
+		const r = Err<number, string>("boom").andThen(() => Ok(1));
+		expect(r.isErr()).toBe(true);
+	});
 
-  describe('map', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        const ok = 100;
+	it("or возвращает fallback", () => {
+		const r = Err<number, string>("boom").or(Ok(5));
+		expect(r.unwrap()).toBe(5);
+	});
 
-        test(`should be ${isOk ? ok : result}: ${ok}`, () => {
-          const mapped = result.map(() => ok);
-          expect(mapped.isOk()).toStrictEqual(isOk);
-          if (isOk) {
-            expect(mapped.unwrap()).toStrictEqual(ok);
-          }
-        });
-      });
-    });
-  });
+	it("orElse вызывает функцию", () => {
+		const spy = vi.fn(() => Ok<number, string>(6));
+		const r = Err<number, string>("boom").orElse(spy);
 
-  describe('mapOr', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        const ok = 100;
-        const defaultOk = 1000;
-        test(`should be ${isOk ? ok : defaultOk}: ${defaultOk} ${ok}`, () => {
-          const mapped = result.mapOr(defaultOk, () => ok);
-          if (isOk) {
-            expect(mapped).toStrictEqual(ok);
-          } else {
-            expect(mapped).toStrictEqual(defaultOk);
-          }
-        });
-      });
-    });
-  });
+		expect(spy).toHaveBeenCalled();
+		expect(r.unwrap()).toBe(6);
+	});
 
-  describe('mapOrElse', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        const ok = 100;
-        const defaultOk = 1000;
-        test(`should be ${isOk ? ok : defaultOk}: ${defaultOk} ${ok}`, () => {
-          const mapped = result.mapOrElse(
-            () => defaultOk,
-            () => ok,
-          );
-          if (isOk) {
-            expect(mapped).toStrictEqual(ok);
-          } else {
-            expect(mapped).toStrictEqual(defaultOk);
-          }
-        });
-      });
-    });
-  });
+	it("unwrapOr возвращает дефолт", () => {
+		expect(Err<number, string>("boom").unwrapOr(10)).toBe(10);
+	});
 
-  describe('mapErr', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        const err = 100;
+	it("unwrapOrElse вызывает функцию", () => {
+		const spy = vi.fn(() => 11);
+		const r = Err<number, string>("boom").unwrapOrElse(spy);
 
-        test(`should be ${isOk ? result : err}: ${err}`, () => {
-          const mapped = result.mapErr(() => err);
-          expect(mapped.isOk()).toStrictEqual(isOk);
-          if (!isOk) {
-            expect(mapped.unwrapErr()).toStrictEqual(err);
-          }
-        });
-      });
-    });
-  });
+		expect(spy).toHaveBeenCalled();
+		expect(r).toBe(11);
+	});
 
-  describe('expect', () => {
-    testCases.forEach(({ name, result, isOk, value }) => {
-      describe(name, () => {
-        const msg = 'Some Error';
-        test(`should ${isOk ? `be ${value}` : `throw "${msg}"`}: "${msg}"`, () => {
-          if (isOk) {
-            const v = result.expect(msg);
-            expect(v).toStrictEqual(value);
-          } else {
-            expect(() => result.expect(msg)).toThrowError(msg);
-          }
-        });
-      });
-    });
-  });
+	it("match вызывает Err ветку", () => {
+		const r = Err<number, string>("boom").match({
+			Ok: () => 1,
+			Err: e => e.length,
+		});
+		expect(r).toBe(4);
+	});
 
-  describe('expectErr', () => {
-    testCases.forEach(({ name, result, isOk, value }) => {
-      describe(name, () => {
-        const msg = 'Some Error';
-        test(`should ${isOk ? `throw "${msg}"` : `be ${value}`}: "${msg}"`, () => {
-          if (isOk) {
-            expect(() => result.expectErr(msg)).toThrowError(msg);
-          } else {
-            const v = result.expectErr(msg);
-            expect(v).toStrictEqual(value);
-          }
-        });
-      });
-    });
-  });
+	it("toOption возвращает None", () => {
+		const opt = Err<number, string>("boom").toOption();
+		expect(opt.isNone()).toBe(true);
+	});
+});
 
-  describe('inspect', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        test(`should be called ${isOk ? 1 : 0} time(s)`, () => {
-          const fn = vi.fn();
-          result.inspect(fn);
-          expect(fn).toBeCalledTimes(isOk ? 1 : 0);
-        });
-      });
-    });
-  });
+describe("result.try", () => {
+	it("возвращает Ok если без ошибки", () => {
+		const r = Result.try(() => 5);
+		expect(r.isOk()).toBe(true);
+		expect(r.unwrap()).toBe(5);
+	});
 
-  describe('inspectErr', () => {
-    testCases.forEach(({ name, result, isOk }) => {
-      describe(name, () => {
-        test(`should be called ${isOk ? 0 : 1} time(s)`, () => {
-          const fn = vi.fn();
-          result.inspectErr(fn);
-          expect(fn).toBeCalledTimes(isOk ? 0 : 1);
-        });
-      });
-    });
-  });
+	it("возвращает Err если ошибка", () => {
+		const r = Result.try(() => {
+			throw new Error("boom");
+		});
+		expect(r.isErr()).toBe(true);
+	});
 
-  describe('unwrap', () => {
-    testCases.forEach(({ name, result, isOk, value }) => {
-      describe(name, () => {
-        test(`should ${isOk ? `be ${value}` : `throw "Tried to unwrap Err"`}`, () => {
-          if (isOk) {
-            const v = result.unwrap();
-            expect(v).toStrictEqual(value);
-          } else {
-            expect(() => result.unwrap()).toThrowError('Tried to unwrap Err');
-          }
-        });
-      });
-    });
-  });
+	it("мапит ошибку через onError", () => {
+		const r = Result.try(
+			() => {
+				throw new Error("boom");
+			},
+			() => "mapped",
+		);
 
-  describe('unwrapErr', () => {
-    testCases.forEach(({ name, result, isOk, value }) => {
-      describe(name, () => {
-        test(`should ${isOk ? `throw "Tried to unwrap Ok"` : `be ${value}`}`, () => {
-          if (isOk) {
-            expect(() => result.unwrapErr()).toThrowError('Tried to unwrap Ok');
-          } else {
-            const v = result.unwrapErr();
-            expect(v).toStrictEqual(value);
-          }
-        });
-      });
-    });
-  });
+		expect(r.unwrapErr()).toBe("mapped");
+	});
+});
 
-  describe('unwrapOr', () => {
-    testCases.forEach(({ name, result, isOk, value }) => {
-      describe(name, () => {
-        const defaultValue = 100;
-        test(`should be ${isOk ? value : defaultValue}: ${defaultValue}`, () => {
-          const v = result.unwrapOr(defaultValue);
-          expect(v).toStrictEqual(isOk ? value : defaultValue);
-        });
-      });
-    });
-  });
+describe("result.tryAsync", () => {
+	it("возвращает Ok", async () => {
+		const r = await Result.tryAsync(async () => 5);
+		expect(r.isOk()).toBe(true);
+		expect(r.unwrap()).toBe(5);
+	});
 
-  describe('unwrapOrElse', () => {
-    testCases.forEach(({ name, result, isOk, value }) => {
-      describe(name, () => {
-        const defaultValue = 100;
-        test(`should be ${isOk ? value : defaultValue}: ${defaultValue}`, () => {
-          const v = result.unwrapOrElse(() => defaultValue);
-          expect(v).toStrictEqual(isOk ? value : defaultValue);
-        });
-      });
-    });
-  });
+	it("возвращает Err", async () => {
+		const r = await Result.tryAsync(async () => {
+			throw new Error("boom");
+		});
+		expect(r.isErr()).toBe(true);
+	});
+});
 
-  describe('ok', () => {
-    testCases.forEach(({ name, result, isOk, value }) => {
-      describe(name, () => {
-        test(`should be ${isOk ? `Some(${value})` : 'None'}`, () => {
-          const res = result.ok();
-          expect(res.isSome()).toStrictEqual(isOk);
-          if (isOk) {
-            expect(res.unwrap()).toStrictEqual(value);
-          }
-        });
-      });
-    });
-  });
+describe("result.all", () => {
+	it("собирает все Ok", () => {
+		const r = Result.all([Ok(1), Ok(2), Ok(3)]);
+		expect(r.unwrap()).toEqual([1, 2, 3]);
+	});
 
-  describe('err', () => {
-    testCases.forEach(({ name, result, isOk, value }) => {
-      describe(name, () => {
-        test(`should be ${isOk ? 'None' : `Some(${value})`}`, () => {
-          const res = result.err();
-          expect(res.isSome()).toStrictEqual(!isOk);
-          if (!isOk) {
-            expect(res.unwrap()).toStrictEqual(value);
-          }
-        });
-      });
-    });
-  });
+	it("возвращает первый Err", () => {
+		const r = Result.all([Ok(1), Err<number, string>("boom"), Ok(3)]);
+		expect(r.isErr()).toBe(true);
+		expect(r.unwrapErr()).toBe("boom");
+	});
+});
 
-  describe('toAsyncResult', () => {
-    testCases.forEach(({ name, result, isOk, value }) => {
-      describe(name, () => {
-        test(`should be AsyncResult`, async () => {
-          const asyncResult = result.toAsyncResult();
-          expect(asyncResult).toBeInstanceOf(AsyncResult);
-          const awaited = await asyncResult.promise;
-          expect(awaited.isOk()).toStrictEqual(isOk);
-          if (isOk) {
-            expect(awaited.unwrap()).toStrictEqual(value);
-          }
-        });
-      });
-    });
-  });
+describe("result.allAsync", () => {
+	it("собирает все Ok", async () => {
+		const r = await Result.allAsync([
+			Promise.resolve(Ok(1)),
+			Promise.resolve(Ok(2)),
+		]);
 
-  describe('toString', () => {
-    testCases.forEach(({ name, result }) => {
-      describe(name, () => {
-        test(`should be ${name}`, async () => {
-          expect(result.toString()).toStrictEqual(name);
-        });
-      });
-    });
-  });
+		expect(r.unwrap()).toEqual([1, 2]);
+	});
+
+	it("возвращает Err", async () => {
+		const r = await Result.allAsync([
+			Promise.resolve(Ok(1)),
+			Promise.resolve(Err<number, string>("boom")),
+		]);
+
+		expect(r.isErr()).toBe(true);
+	});
+});
+
+describe("result.any", () => {
+	it("возвращает первый Ok", () => {
+		const r = Result.any([
+			Err<number, string>("a"),
+			Ok(5),
+			Err<number, string>("b"),
+		]);
+
+		expect(r.unwrap()).toBe(5);
+	});
+
+	it("возвращает Err со всеми ошибками", () => {
+		const r = Result.any([
+			Err<number, string>("a"),
+			Err<number, string>("b"),
+		]);
+
+		expect(r.isErr()).toBe(true);
+		expect(r.unwrapErr()).toEqual(["a", "b"]);
+	});
 });
